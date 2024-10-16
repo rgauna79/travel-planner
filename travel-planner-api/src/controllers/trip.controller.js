@@ -1,24 +1,12 @@
-<<<<<<< HEAD
 import User from "../models/user.model.js";
 import Trip from "../models/trip.model.js";
 
-=======
-import Trip from "../models/trip.js";
-import User from "../models/user.js";
-
-// create a Trip
->>>>>>> b1ddb43 (add: trip controller)
 export const createTrip = async (req, res) => {
   try {
     const { userId, name, destination, startDate, endDate, notes } = req.body;
 
-<<<<<<< HEAD
     const userFound = await User.findById(userId);
     if (userFound) {
-=======
-    const existingUser = await User.findById({ userId });
-    if (existingUser) {
->>>>>>> b1ddb43 (add: trip controller)
       const trip = new Trip({
         userId,
         name,
@@ -27,7 +15,6 @@ export const createTrip = async (req, res) => {
         endDate,
         notes,
       });
-<<<<<<< HEAD
 
       trip.save();
       res.status(200).json(trip);
@@ -36,20 +23,10 @@ export const createTrip = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: "Failed creating trip" });
-=======
-      await trip.save();
-      res.status(201).json(trip);
-    } else {
-      return res.status(400).json({ error: "Invalid User" });
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Trip creation failed."})
->>>>>>> b1ddb43 (add: trip controller)
   }
 };
 
 // get all trips
-<<<<<<< HEAD
 export const getTrips = async (req, res) => {
   try {
     const trips = await Trip.find().populate("userId");
@@ -99,9 +76,3 @@ export const deleteTrip = async (req, res) => {
     res.status(500).json({ error: "Trip deletion failed." });
   }
 };
-=======
-export const getTrips = async(req,res) => {
-  
-}
-
->>>>>>> b1ddb43 (add: trip controller)

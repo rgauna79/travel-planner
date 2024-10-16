@@ -54,7 +54,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 export const logoutUser = async (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,
@@ -65,12 +64,12 @@ export const logoutUser = async (req, res) => {
 };
 
 export const verifyToken = async (req, res) => {
-  const token = req.cookies.authToken; // Leer el token de la cookie
+  const token = req.cookies.authToken; 
   if (!token) {
     return res.status(401).json({ message: "No token provided." });
   }
 
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, TOKEN_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: "Invalid token." });
     }
@@ -78,21 +77,3 @@ export const verifyToken = async (req, res) => {
     res.status(200).json({ message: "Token is valid", user: decoded });
   });
 };
-=======
-// get user info
-
-export const getUser = async (req,res) => {
-  const { id } = req.params
-
-  const user = await User.findById(id)
-  
-  if (user) {
-    res.status(200).json(
-      {
-        name: user.name,
-        email: user.email
-      }
-    )
-  }
-}
->>>>>>> b1ddb43 (add: trip controller)

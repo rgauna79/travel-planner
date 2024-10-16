@@ -10,6 +10,7 @@ async function main() {
   try {
     connectDB();
     app.listen(PORT);
+    console.log("LISTENING ON PORT >> ", PORT)
   } catch (error) {
     console.log(error);
   }

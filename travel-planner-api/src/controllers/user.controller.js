@@ -1,7 +1,8 @@
-import User from "../models/user.js";
+import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { createUserToken } from "../utils/jwt.js";
 import { TOKEN_SECRET } from "../config/config.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   try {
@@ -35,11 +36,44 @@ export const loginUser = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ error: "Invalid Credentials" });
     }
-    const token = jwt.sign({ userId: user._id }, TOKEN_SECRET, {
-      expiresIn: "1h",
+    const token = createUserToken(user);
+
+    res.cookie("authToken", token, {
+      httpOnly: true, // Not Accessible from JavaScript
+      secure: true, // Solo en conexiones HTTPS en producción
+      sameSite: "None", // Protege contra ataques CSRF
+      maxAge: 3600000, // 1 hora
     });
-    res.status(200).json({ message: "Login successful!", token });
+
+    res
+      .status(200)
+      .json({ id: user._id, name: user.name, email: user.email, token });
   } catch (error) {
+    console.error("Login Error:", error);
     res.status(500).json({ error: "Login failed." });
   }
+};
+
+export const logoutUser = async (req, res) => {
+  res.clearCookie("authToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  });
+  res.status(200).json({ message: "Logout successful" });
+};
+
+export const verifyToken = async (req, res) => {
+  const token = req.cookies.authToken; // Leer el token de la cookie
+  if (!token) {
+    return res.status(401).json({ message: "No token provided." });
+  }
+
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid token." });
+    }
+
+    res.status(200).json({ message: "Token is valid", user: decoded });
+  });
 };

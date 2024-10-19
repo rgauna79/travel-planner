@@ -54,6 +54,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 export const logoutUser = async (req, res) => {
   res.clearCookie("authToken", {
     httpOnly: true,
@@ -77,3 +78,21 @@ export const verifyToken = async (req, res) => {
     res.status(200).json({ message: "Token is valid", user: decoded });
   });
 };
+=======
+// get user info
+
+export const getUser = async (req,res) => {
+  const { id } = req.params
+
+  const user = await User.findById(id)
+  
+  if (user) {
+    res.status(200).json(
+      {
+        name: user.name,
+        email: user.email
+      }
+    )
+  }
+}
+>>>>>>> b1ddb43 (add: trip controller)

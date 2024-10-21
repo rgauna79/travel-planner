@@ -5,12 +5,14 @@ import {
   logoutUser,
   verifyToken,
 } from "../controllers/user.controller.js";
+import { validateSchema } from "../middlewares/validator.middleware.js";
+import { loginSchema, registerSchema } from "../schemas/user.schema.js"
 
 const router = express.Router();
 
-router.post("/register", registerUser);
+router.post("/register", validateSchema(registerSchema), registerUser);
 
-router.post("/login", loginUser);
+router.post("/login", validateSchema(loginSchema), loginUser);
 
 router.get("/logout", logoutUser);
 

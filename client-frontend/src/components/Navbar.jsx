@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FaSun, FaMoon } from "react-icons/fa"; 
 
-const Navbar = () => {
+const MyNavbar = ({ theme, toggleTheme }) => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
@@ -12,45 +14,52 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
-        <Link className="navbar-brand" to="/">
-          PlanMyTrip
-        </Link>
-        <div className="collapse navbar-collapse">
-          <ul className="navbar-nav ml-auto">
-            {user ? (
+    <Navbar expand="lg" bg={theme === "dark" ? "dark" : "light"} variant={theme}>
+      <Container>
+        <LinkContainer to="/">
+          <Navbar.Brand><strong>PlanMyTrip</strong></Navbar.Brand>
+        </LinkContainer>
+        <Navbar.Toggle aria-controls="navbarNav" />
+        <Navbar.Collapse id="navbarNav">
+          <Nav className="ms-auto">
+            {isAuthenticated ? (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/trips">
-                    My Trips
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <button onClick={handleLogout} className="btn btn-secondary">
-                    Logout
-                  </button>
-                </li>
+                <LinkContainer to="/trips">
+                  <Nav.Link className="text-center text-nowrap my-2">My Trips</Nav.Link>
+                </LinkContainer>
+                <Button
+                  onClick={handleLogout}
+                  variant={theme === "dark" ? "outline-light" : "outline-dark"}
+                  className="w-100 my-2"
+                >
+                  Logout
+                </Button>
               </>
             ) : (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">
-                    Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/register">
-                    Register
-                  </Link>
-                </li>
+                <LinkContainer to="/login" >
+                  <Nav.Link className="text-center text-nowrap my-2">Login</Nav.Link>
+                </LinkContainer>
+                <LinkContainer to="/register" >
+                  <Nav.Link className="text-center text-nowrap my-2">Register</Nav.Link>
+                </LinkContainer>
               </>
             )}
-          </ul>
-        </div>
-      </div>
-    </nav>
+            <div className="theme-toggle text-center d-flex align-items-center my-2">
+              <FaSun className="my-2" />
+              <div
+                className={`theme-slider ${theme === "dark" ? "active" : ""}`}
+                onClick={toggleTheme}
+              >
+                <div className="slider-circle"></div>
+              </div>
+              <FaMoon className="ms-2" />
+            </div>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default MyNavbar;

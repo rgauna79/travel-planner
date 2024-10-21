@@ -1,55 +1,56 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../api/axiosConfig";
 import { useAuth } from "../context/AuthContext";
+import { useForm } from "react-hook-form";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const [error, setError] = useState(null);
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { login, isAuthenticated, error } = useAuth();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      await login(email, password);
-      navigate("/trips");
+      await login(data);
     } catch (error) {
-      setError("Login failed. Please check your credentials.");
       console.error(error);
     }
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/trips");
+    }
+  }, [isAuthenticated]);
+
   return (
-    <div className="container">
-      <h2>Login</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleLogin}>
-        <div className="mb-3">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Login
-        </button>
-      </form>
+    <div className="container d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
+      <div className="card p-4 shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
+        <h2 className="text-center mb-4">Login</h2>
+        {error && <div className="alert alert-danger">{error}</div>}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-3">
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-control"
+              {...register("email")}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-control"
+              {...register("password")}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -3,8 +3,8 @@ import Trip from "../models/trip.model.js";
 
 export const createTrip = async (req, res) => {
   try {
-    const { userId, name, destination, startDate, endDate, notes } = req.body;
-
+    const userId = req.user.id;
+    const { name, destination, startDate, endDate, notes } = req.body;
     const userFound = await User.findById(userId);
     if (userFound) {
       const trip = new Trip({
@@ -15,7 +15,6 @@ export const createTrip = async (req, res) => {
         endDate,
         notes,
       });
-
       trip.save();
       res.status(200).json(trip);
     } else {
@@ -29,7 +28,32 @@ export const createTrip = async (req, res) => {
 // get all trips
 export const getTrips = async (req, res) => {
   try {
-    const trips = await Trip.find().populate("userId");
+    //filter data with select
+    const trips = await Trip.find({
+      userId: req.user.id,
+    })
+      .select("name destination startDate endDate notes expenses activities")
+      .populate("userId");
+
+    //filter user data
+    // const trips = await Trip.find({
+    //   userId: req.user.id,
+    // }).populate({
+    //   path: "userId",
+    //   select: "first_name last_name email",
+    // });
+
+    // filtering with map
+    // const tripsFiltered = trips.map((trip) => ({
+    //   name: trip.name,
+    //   destination: trip.destination,
+    //   startDate: trip.startDate,
+    //   endDate: trip.endDate,
+    //   notes: trip.notes,
+    //   expenses: trip.notes,
+    //   activities: trip.activities,
+    // }));
+
     res.status(200).json(trips);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch trips." });

@@ -6,16 +6,21 @@ import {
   updateTrip,
   deleteTrip,
 } from "../controllers/trip.controller.js";
+import { tripSchema } from "../schemas/trip.schema.js";
+import { validateSchema } from "../middlewares/validator.middleware.js";
+import { authenticateToken } from "../middlewares/verifyToken.middleware.js";
 
 const router = express.Router();
 
-router.post("/", createTrip);
+router.use(authenticateToken);
 
-router.get("/", getTrips);
+router.post("/", validateSchema(tripSchema), createTrip);
 
-router.get("/:id", getTripById);
+router.get("/", authenticateToken, getTrips);
 
-router.put("/:id", updateTrip);
+router.get("/:id", authenticateToken, getTripById);
+
+router.put("/:id", validateSchema(tripSchema), updateTrip);
 
 router.delete("/:id", deleteTrip);
 

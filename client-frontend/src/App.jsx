@@ -5,22 +5,23 @@ import RegisterPage from "./pages/RegisterPage";
 import TripsPage from "./pages/TripsPage";
 import TripDetailPage from "./pages/TripDetailPage";
 import Navbar from "./components/Navbar";
-import { AuthProvider } from "./context/AuthContext";
+import TripFormPage from "./pages/TripFormPage.jsx";
+import { TripProvider } from "./context/TripContext.jsx";
 import { useEffect, useState } from "react";
 
 function App() {
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-bs-theme", theme)
-  },[theme])
+    document.documentElement.setAttribute("data-bs-theme", theme);
+  }, [theme]);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   return (
-    <AuthProvider>
+    <TripProvider>
       <div className={theme}>
         <Router>
           <div className="container d-flex flex-column">
@@ -31,11 +32,15 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/trips" element={<TripsPage />} />
               <Route path="/trips/:id" element={<TripDetailPage />} />
+              <Route path="/add-trip" element={<TripFormPage />} />
+              <Route path="/edit-trip/:id" element={<TripFormPage />} />
+
+              <Route path="*" element={<HomePage />} />
             </Routes>
           </div>
         </Router>
       </div>
-    </AuthProvider>
+    </TripProvider>
   );
 }
 

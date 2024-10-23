@@ -13,7 +13,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ error: "User already exists." });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     const user = new User({
       username,
       first_name,
@@ -22,7 +22,6 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    
     await user.save();
 
     const token = createUserToken(user);
@@ -33,11 +32,15 @@ export const registerUser = async (req, res) => {
       maxAge: 3600000, // 1 hour
     });
 
-    res
-      .status(200)
-      .json({ message: "User registered sucesfully!", id: user._id, name: user.name, email: user.email, token });
+    res.status(200).json({
+      message: "User registered sucesfully!",
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Registration failed"});
+    res.status(500).json({ message: "Registration failed" });
   }
 };
 
@@ -78,16 +81,22 @@ export const logoutUser = async (req, res) => {
 };
 
 export const verifyToken = async (req, res) => {
-  const token = req.cookies.authToken; 
+  const token = req.cookies.authToken;
   if (!token) {
-    return res.status(200).json({ authenticated: false, message: "No token provided." });
+    return res
+      .status(200)
+      .json({ authenticated: false, message: "No token provided." });
   }
 
   jwt.verify(token, TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ authenticated: false, message: "Invalid token." });
+      return res
+        .status(403)
+        .json({ authenticated: false, message: "Invalid token." });
     }
 
-    res.status(200).json({ authenticated: true, message: "Token is valid", user: decoded });
+    res
+      .status(200)
+      .json({ authenticated: true, message: "Token is valid", user: decoded });
   });
 };

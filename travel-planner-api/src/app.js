@@ -12,9 +12,10 @@ import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "https://mwrjsz-5173.csb.app";
+// const FRONTEND_URL = process.env.FRONTEND_URL || "https://mwrjsz-5173.csb.app";
+const FRONTEND_URL = "https://mwrjsz-5173.csb.app";
 
-console.log("Frontend URL >> ", FRONTEND_URL)
+console.log("Frontend URL >> ", FRONTEND_URL);
 app.use(
   cors({
     origin: FRONTEND_URL,

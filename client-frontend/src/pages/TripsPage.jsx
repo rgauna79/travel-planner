@@ -1,31 +1,28 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTrip } from "../context/TripContext";
 
 const TripsPage = () => {
-  const [trips, setTrips] = useState([]);
+  const { trips, loading, error, getTrips } = useTrip();
 
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const response = await axios.get("/api/trips");
-        setTrips(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchTrips();
-  }, []);
-  if (trips.length > 0) {
-    return (
-      <div>
-        <h1>No trips</h1>
-      </div>
-    );
+    getTrips();
+  }, [getTrips]);
+
+  if (loading) {
+    return <div className="container mt-5">Loading trips...</div>;
   }
+
+  if (error) {
+    return <div className="container mt-5">{error}</div>;
+  }
+
   return (
     <div className="container mt-5">
       <h2 className="mb-4">My Trips</h2>
+      <Link to="/add-trip" className="btn btn-primary mb-4">
+        Add New Trip
+      </Link>
       {trips.length === 0 ? (
         <p>No trips found. Start planning your first trip!</p>
       ) : (

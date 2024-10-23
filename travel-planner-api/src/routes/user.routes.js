@@ -6,7 +6,7 @@ import {
   verifyToken,
 } from "../controllers/user.controller.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { loginSchema, registerSchema } from "../schemas/user.schema.js"
+import { loginSchema, registerSchema } from "../schemas/user.schema.js";
 
 const router = express.Router();
 

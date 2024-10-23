@@ -1,25 +1,48 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTrip } from "../context/TripContext";
+import { RiDeleteBin6Line, RiEdit2Line } from "react-icons/ri"; // Asegúrate de tener react-icons instalados
 
 const TripDetailPage = () => {
   const { id } = useParams();
+  const { getTrip, deleteTrip } = useTrip();
   const [trip, setTrip] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTripDetails = async () => {
       try {
-        const response = await axios.get(`/api/trips/${id}`);
-        setTrip(response.data);
+        const response = await getTrip(id);
+        setTrip(response);
       } catch (error) {
         console.error(error);
+        setError("Error fetching trip details");
+      } finally {
+        setLoading(false);
       }
     };
     fetchTripDetails();
-  }, [id]);
+  }, [id, getTrip]);
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this trip?")) {
+      await deleteTrip(id);
+      navigate("/trips"); // Regresar a la lista de viajes después de eliminar
+    }
+  };
+
+  if (loading) {
+    return <div className="container mt-5">Loading trip details...</div>;
+  }
+
+  if (error) {
+    return <div className="container mt-5">{error}</div>;
+  }
 
   if (!trip) {
-    return <div className="container mt-5">Loading trip details...</div>;
+    return <div className="container mt-5">No trip found.</div>;
   }
 
   return (
@@ -39,7 +62,6 @@ const TripDetailPage = () => {
         <strong>Notes:</strong> {trip.notes || "No additional notes"}
       </p>
 
-      {/* Aquí puedes agregar secciones para mostrar actividades y gastos relacionados */}
       <h3 className="mt-4">Activities</h3>
       <ul className="list-group">
         {trip.activities && trip.activities.length > 0 ? (
@@ -65,6 +87,21 @@ const TripDetailPage = () => {
           <li className="list-group-item">No expenses found</li>
         )}
       </ul>
+
+      <div className="mt-4">
+        <button onClick={() => navigate(-1)} className="btn btn-secondary me-2">
+          Go Back
+        </button>
+        <button onClick={handleDelete} className="btn btn-danger me-2">
+          <RiDeleteBin6Line /> Delete
+        </button>
+        <button
+          onClick={() => navigate(`/edit-trip/${trip._id}`)}
+          className="btn btn-warning"
+        >
+          <RiEdit2Line /> Edit
+        </button>
+      </div>
     </div>
   );
 };

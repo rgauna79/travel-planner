@@ -5,12 +5,16 @@ import { useForm } from "react-hook-form";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const { login, isAuthenticated, error } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const { loginUser, isAuthenticated, error } = useAuth();
 
   const onSubmit = async (data) => {
     try {
-      await login(data);
+      await loginUser(data);
     } catch (error) {
       console.error(error);
     }
@@ -23,8 +27,14 @@ const LoginPage = () => {
   }, [isAuthenticated]);
 
   return (
-    <div className="container d-flex justify-content-center align-items-center" style={{ height: '80vh' }}>
-      <div className="card p-4 shadow-sm" style={{ maxWidth: '400px', width: '100%' }}>
+    <div
+      className="container d-flex justify-content-center align-items-center"
+      style={{ height: "80vh" }}
+    >
+      <div
+        className="card p-4 shadow-sm"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
         <h2 className="text-center mb-4">Login</h2>
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit(onSubmit)}>
